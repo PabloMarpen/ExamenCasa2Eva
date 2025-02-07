@@ -2,6 +2,8 @@ package com.example.examencasa2eva
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -15,6 +17,7 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 
@@ -25,6 +28,7 @@ class FragmentoMapa : Fragment(), OnMapReadyCallback {
     private var lati: Double = 0.0
     private var longi: Double = 0.0
     private var mapaListo = false
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragmento_mapa, container, false)
@@ -51,10 +55,14 @@ class FragmentoMapa : Fragment(), OnMapReadyCallback {
         lati = datos1
         longi = datos2
 
+        val iconoPersonalizado = BitmapDescriptorFactory.fromBitmap(
+            resizeMapIcon("pngegg", 100, 100) // Redimensiona la imagen
+        )
+
         if (mapaListo) {
             val nuevaUbicacion = LatLng(lati, longi)
             mMap.clear()
-            mMap.addMarker(MarkerOptions().position(nuevaUbicacion).title("Nueva ubicación"))
+            mMap.addMarker(MarkerOptions().position(nuevaUbicacion).title("Nueva ubicación").icon(iconoPersonalizado))
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(nuevaUbicacion, 15f))
 
             val iesjulian = LatLng(41.6320851, -4.7590656)
@@ -80,6 +88,14 @@ class FragmentoMapa : Fragment(), OnMapReadyCallback {
     override fun onLowMemory() {
         super.onLowMemory()
         mapView.onLowMemory()
+    }
+
+    private fun resizeMapIcon(iconName: String, width: Int, height: Int): Bitmap {
+        val imageBitmap = BitmapFactory.decodeResource(
+            resources,
+            resources.getIdentifier(iconName, "drawable", requireContext().packageName)
+        )
+        return Bitmap.createScaledBitmap(imageBitmap, width, height, false)
     }
 }
 
