@@ -6,6 +6,7 @@ import android.os.Handler
 import android.os.Looper
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -17,6 +18,7 @@ import kotlinx.coroutines.withContext
 class HilosCorrutinas : AppCompatActivity() {
 
     private lateinit var textoResultado: TextView
+    private lateinit var progresoCalculo: ProgressBar
     private val handler = Handler(Looper.getMainLooper())
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,10 +26,12 @@ class HilosCorrutinas : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.hilos_corrutinas)
 
+         progresoCalculo = findViewById(R.id.progresoCalculo)
         val botonCalcular: Button = findViewById(R.id.button2)
         val entradaNumero: EditText = findViewById(R.id.editTextPrimos)
         val botonCalcularCoroutines: Button = findViewById(R.id.button4)
         val botonSQLite: Button = findViewById(R.id.buttonSQLite)
+
         textoResultado = findViewById(R.id.textViewResultado)
 
 
@@ -40,8 +44,8 @@ class HilosCorrutinas : AppCompatActivity() {
 
         botonCalcularCoroutines.setOnClickListener {
             val numero = entradaNumero.text.toString().toIntOrNull()
-            numero?.let {
-                calcularPrimosConCoroutines(it)
+            numero?.let { n ->
+                calcularPrimosConCoroutines(n)
             }
         }
 
@@ -56,19 +60,27 @@ class HilosCorrutinas : AppCompatActivity() {
     }
 
     private fun calcularPrimosConCoroutines(n: Int) {
+        progresoCalculo.visibility = android.view.View.VISIBLE
+        progresoCalculo.max = n //Se fija el máximo en la progress bar
+
+
         CoroutineScope(Dispatchers.Main).launch {
             val primos = withContext(Dispatchers.Default) {
-                calcularPrimos(n)
+                calcularPrimosCarga(n) { progreso ->
+                    launch(Dispatchers.Main) {
+                        progresoCalculo.progress = progreso
+                    }
+                }
             }
             textoResultado.text = primos.joinToString(", ")
+            progresoCalculo.visibility = android.view.View.INVISIBLE
         }
     }
-
 
     private fun calcularPrimosEnHiloSeparado(n: Int) {
 
         Thread {
-            val primos = calcularPrimos(n)
+            val primos = calcularPrimosNormal(n)
 
             handler.post {
                 textoResultado.text = primos.joinToString(", ")
@@ -76,7 +88,20 @@ class HilosCorrutinas : AppCompatActivity() {
         }.start()
     }
 
-    private fun calcularPrimos(n: Int): List<Int> {
+    private fun calcularPrimosCarga(n: Int, actualizarProgreso: (Int) -> Unit): List<Int> {
+        val primos = mutableListOf<Int>()
+        var numero = 2
+        while (primos.size < n) {
+            if (esPrimo(numero)) {
+                primos.add(numero)
+                actualizarProgreso(primos.size)
+            }
+            numero++
+        }
+        return primos
+    }
+
+    private fun calcularPrimosNormal(n: Int): List<Int> {
         val primos = mutableListOf<Int>()
         var numero = 2
 
