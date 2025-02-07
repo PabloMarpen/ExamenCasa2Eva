@@ -1,6 +1,7 @@
 package com.example.examencasa2eva
 
 import android.content.Intent
+import android.content.res.Configuration
 import android.os.Bundle
 import android.widget.Button
 import androidx.activity.enableEdgeToEdge
@@ -11,6 +12,9 @@ class Principal : AppCompatActivity(), ComunicadorFragments {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.principal)
+
+
+
 
         val button3 = findViewById<Button>(R.id.button3)
 
