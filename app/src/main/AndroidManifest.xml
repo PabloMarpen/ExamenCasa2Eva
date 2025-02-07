@@ -2,6 +2,39 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- Permiso para acceder a Internet (necesario para API, carga de datos, etc.) -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <!-- Permiso para obtener ubicación aproximada (WiFi y red móvil) -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
+    <!-- Permiso para obtener ubicación precisa (GPS y redes) -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
+    <!-- Permiso para acceder a la ubicación en segundo plano (necesario en Android 10+ si la app usa ubicación sin estar abierta) -->
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+
+    <!-- Permiso para escribir en el almacenamiento externo (Android 9 o inferior, obsoleto en Android 10+)
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />  -->
+
+    <!-- Permiso para leer archivos del almacenamiento externo (Android 9 o inferior, en Android 10+ se usa Scoped Storage)
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" /> -->
+
+    <!-- Permiso para leer imágenes en Android 13+ -->
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+
+    <!-- Permiso para leer videos en Android 13+ -->
+    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
+
+    <!-- Permiso para leer archivos de audio en Android 13+ -->
+    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
+
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+
+
+
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -27,7 +60,11 @@
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyCI8J0ZpoP4lfuaL5OSHwvNuQBPh_F9R8Q" />
+            android:value="AIzaSyC6wgSCubuu9I5pnllFGgLhBKKEjAOASPA" />
+
+        <service android:name=".NotificationWorker"
+            android:permission="android.permission.BIND_JOB_SERVICE"
+            android:exported="false"/>
     </application>
 
 
